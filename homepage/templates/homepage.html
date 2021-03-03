@@ -1,5 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="mt-5">Homepage</h1>
+    <h1 class="mt-5">Bloodline blood bank</h1>
+    <p>
+        Welcome to bloodline service, which allows you to register blood donations and retrieve
+        units for day to day and ER usage, as well as MCI(multiple casualty incidents).
+    </p>
+    <h2 class="mt-4">Outstanding units</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Blood type</th>
+            <th scope="col">Unit count</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in outstanding %}
+            <tr>
+                <td>{{ row.blood_type }}</td>
+                <td>{{ row.outstanding }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
