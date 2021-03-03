@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - Donation received{% endblock %}
+{% block content %}
+    <h1 class="mt-5">Donation received</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">Donation ID:</th>
+            <td>{{ donation.id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Units</th>
+            <td>{{ donation.units }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Donor ID:</th>
+            <td>{{ donation.donor.id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">First Name:</th>
+            <td>{{ donation.donor.first_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Last Name:</th>
+            <td>{{ donation.donor.last_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Birthday:</th>
+            <td>{{ donation.donor.birthday }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Blood type:</th>
+            <td>{{ donation.donor.blood_type }}</td>
+        </tr>
+
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - Single request complete{% endblock %}
+{% block content %}
+    <h1 class="mt-5">Single Request Complete</h1>
+
+    <h2 class="mt-4">Request:</h2>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">Request ID:</th>
+            <td>{{ single_request.id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Units</th>
+            <td>{{ single_request.units }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Patient ID:</th>
+            <td>{{ single_request.patient.id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">First Name:</th>
+            <td>{{ single_request.patient.first_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Last Name:</th>
+            <td>{{ single_request.patient.last_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Birthday:</th>
+            <td>{{ single_request.patient.birthday }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Blood type:</th>
+            <td>{{ single_request.patient.blood_type }}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2 class="mt-4">Issues:</h2>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Issue number</th>
+            <th scope="col">Donation ID</th>
+            <th scope="col">Blood Type</th>
+            <th scope="col">Units</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for issue in single_request.issue_set.all %}
+            <tr>
+                <td>{{ issue.id }}</td>
+                <td>{{ issue.donation_id }}</td>
+                <td>{{ issue.blood_type }}</td>
+                <td>{{ issue.units }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

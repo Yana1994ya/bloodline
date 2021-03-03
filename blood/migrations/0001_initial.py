@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -19,7 +18,9 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=250)),
                 ('last_name', models.CharField(max_length=250)),
                 ('birthday', models.DateField()),
-                ('blood_type', models.CharField(choices=[('A+', 'A+'), ('O+', 'O+'), ('B+', 'B+'), ('AB+', 'AB+'), ('A-', 'A-'), ('O-', 'O-'), ('B-', 'B-'), ('AB-', 'AB-')], max_length=10)),
+                ('blood_type', models.CharField(
+                    choices=[('A+', 'A+'), ('O+', 'O+'), ('B+', 'B+'), ('AB+', 'AB+'), ('A-', 'A-'),
+                             ('O-', 'O-'), ('B-', 'B-'), ('AB-', 'AB-')], max_length=10)),
             ],
         ),
         migrations.CreateModel(
@@ -28,7 +29,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(primary_key=True, serialize=False)),
                 ('units', models.IntegerField()),
                 ('donation_date', models.DateTimeField(auto_now_add=True)),
-                ('donor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blood.patient')),
+                ('donor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                                            to='blood.patient')),
             ],
         ),
     ]

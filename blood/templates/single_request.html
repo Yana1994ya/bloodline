@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - Add donation{% endblock %}
+{% block content %}
+    <h1 class="mt-5">Add donation</h1>
+    ID Number: {{ id_number }}
+
+    <form method="post" action="{% url 'single_request' id_number=id_number %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Search</button>
+    </form>
+
+
+{% endblock %}

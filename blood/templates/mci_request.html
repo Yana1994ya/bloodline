@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - MCI Request{% endblock %}
+{% block content %}
+    <h1 class="mt-5">MCI Request</h1>
+
+    <form method="post" action="{% url 'mci_request' %}">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+
+
+{% endblock %}

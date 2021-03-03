@@ -9,12 +9,48 @@
     <meta name="description" content="The HTML5 Herald">
     <meta name="author" content="SitePoint">
 
-    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
+
 
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
-<!--<script src="js/scripts.js"></script>-->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Bloodline</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a
+                                class="nav-link active"
+                                aria-current="page"
+                                href="{% url 'donation_start' %}">
+                            Donation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'single_request_start' %}">Single
+                            request</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mci_request' %}">MCI request</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<main>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+        crossorigin="anonymous"></script>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
 </body>
 </html>

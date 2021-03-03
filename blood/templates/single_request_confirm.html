@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - Single request - confirm{% endblock %}
+{% block content %}
+    <h1 class="mt-5">Single request</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th scope="row">Patient ID:</th>
+            <td>{{ patient.id }}</td>
+        </tr>
+
+        <tr>
+            <th scope="row">First name:</th>
+            <td>{{ patient.first_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">First Name:</th>
+            <td>{{ patient.last_name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Birthday:</th>
+            <td>{{ patient.birthday }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Blood type:</th>
+            <td>{{ patient.blood_type }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Units</th>
+            <td>{{ units }}</td>
+        </tr>
+
+        </tbody>
+    </table>
+
+    <form method="post"
+          action="{% url 'single_request_confirm' id_number=patient.id units=units %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Confirm</button>
+    </form>
+
+
+{% endblock %}

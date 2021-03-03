@@ -1,21 +1,21 @@
 [[package]]
-name = "asgiref"
-version = "3.3.1"
-description = "ASGI specs, helper code, and adapters"
 category = "main"
+description = "ASGI specs, helper code, and adapters"
+name = "asgiref"
 optional = false
 python-versions = ">=3.5"
+version = "3.3.1"
 
 [package.extras]
 tests = ["pytest", "pytest-asyncio"]
 
 [[package]]
-name = "django"
-version = "3.1.7"
-description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
+description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+name = "django"
 optional = false
 python-versions = ">=3.6"
+version = "3.1.7"
 
 [package.dependencies]
 asgiref = ">=3.2.10,<4"
@@ -27,25 +27,33 @@ argon2 = ["argon2-cffi (>=16.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
-name = "pytz"
-version = "2021.1"
-description = "World timezone definitions, modern and historical"
 category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
-name = "sqlparse"
-version = "0.4.1"
-description = "A non-validating SQL parser."
-category = "main"
+description = "Best way to have Django DRY forms"
+name = "django-crispy-forms"
 optional = false
 python-versions = ">=3.5"
+version = "1.11.1"
+
+[[package]]
+category = "main"
+description = "World timezone definitions, modern and historical"
+name = "pytz"
+optional = false
+python-versions = "*"
+version = "2021.1"
+
+[[package]]
+category = "main"
+description = "A non-validating SQL parser."
+name = "sqlparse"
+optional = false
+python-versions = ">=3.5"
+version = "0.4.1"
 
 [metadata]
-lock-version = "1.1"
+content-hash = "f979783c4cf8eeb3413022599205031917cc46b01f81b97353703f50627275a9"
+lock-version = "1.0"
 python-versions = "^3.8"
-content-hash = "4a650012e844fec72cf5f914046dca1190a3ca502b6fe50b787f76ba74052077"
 
 [metadata.files]
 asgiref = [
@@ -55,6 +63,10 @@ asgiref = [
 django = [
     {file = "Django-3.1.7-py3-none-any.whl", hash = "sha256:baf099db36ad31f970775d0be5587cc58a6256a6771a44eb795b554d45f211b8"},
     {file = "Django-3.1.7.tar.gz", hash = "sha256:32ce792ee9b6a0cbbec340123e229ac9f765dff8c2a4ae9247a14b2ba3a365a7"},
+]
+django-crispy-forms = [
+    {file = "django-crispy-forms-1.11.1.tar.gz", hash = "sha256:5c600dea66e2f435f774fe2c4cacfb5b5eb9914dd6da0728edd174b95f6956fd"},
+    {file = "django_crispy_forms-1.11.1-py3-none-any.whl", hash = "sha256:2ea206f35a9554597b89315ea52737d32d2fd9f5304e79a469a08887aa0824b0"},
 ]
 pytz = [
     {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
