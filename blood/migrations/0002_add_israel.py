@@ -2,12 +2,15 @@
 
 from django.db import migrations, transaction
 
+from blood.blood_types import POPULATION_BLOOD_TYPE_DISTRIBUTION
+
 
 @transaction.atomic
 def add_israel(apps, _schema_editor):
     dist = apps.get_model('blood', 'PopulationBloodTypeDistribution')
 
-    israel, _ = dist.objects.get_or_create(name="Israel")
+    israel = dist(name="Israel", dist_type=POPULATION_BLOOD_TYPE_DISTRIBUTION)
+    israel.save()
 
     percentage = apps.get_model('blood', 'PopulationBloodTypePercentage')
 
@@ -21,11 +24,11 @@ def add_israel(apps, _schema_editor):
         ("B-", 2.0),
         ("AB-", 1.0)
     ]:
-        percentage.objects.get_or_create(
+        percentage(
             distribution=israel,
             blood_type=btype,
             percentage=per
-        )
+        ).save()
 
 
 class Migration(migrations.Migration):

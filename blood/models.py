@@ -1,11 +1,11 @@
 from math import ceil
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Type
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from blood.blood_types import AVAILABLE_TYPES_CHOICES
+from blood.blood_types import AVAILABLE_TYPES_CHOICES, POPULATION_BLOOD_TYPE_DISTRIBUTION
 
 
 class InvalidPatientId(Exception):
@@ -114,43 +114,56 @@ class SingleRequest(IssueRequest):
 class BloodTypeDistribution(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
-    content_type = models.ForeignKey(
-        ContentType,
+
+    dist_type = models.CharField(
+        max_length=10,
         editable=False,
-        null=True,
-        on_delete=models.CASCADE
+        null=False,
+        choices=[
+            (POPULATION_BLOOD_TYPE_DISTRIBUTION, POPULATION_BLOOD_TYPE_DISTRIBUTION)
+        ]
     )
 
     def save(self, *args, **kwargs):
-        if not self.content_type:
-            self.content_type = ContentType.objects.get_for_model(self.__class__)
+        if self.dist_type is None:
+            self.dist_type = self.distribution_type()
+
+            if self.dist_type is None:
+                raise Exception("no dist_type set")
 
         super(BloodTypeDistribution, self).save(*args, **kwargs)
 
     @property
+    def cls(self) -> Type['BloodTypeDistribution']:
+        if self.dist_type == POPULATION_BLOOD_TYPE_DISTRIBUTION:
+            return PopulationBloodTypeDistribution
+        else:
+            raise Exception("Encountered unfamiliar distribution type:self.dist_type")
+
+    @property
     def leaf(self) -> 'BloodTypeDistribution':
-        content_type = self.content_type
-        model = content_type.model_class()
+        return self.cls.objects.get(id=self.id)
 
-        if model == BloodTypeDistribution:
-            return self
+    @classmethod
+    def distribution_type(cls) -> str:
+        raise Exception("distribution_type called on abstract base class")
 
-        return model.objects.get(id=self.id)
+    @classmethod
+    def query_required(cls) -> bool:
+        return False
 
     def blood_types(self, total_units: int) -> List[Tuple[str, int]]:
-        return self.leaf.blood_types(total_units)
+        if self.cls.query_required:
+            return self.leaf.blood_types(total_units)
+        else:
+            return self.cls.blood_types(self, total_units)
 
     def __str__(self):
-        content_type = self.content_type
-        model = content_type.model_class()
-
-        if model == BloodTypeDistribution:
-            return self.name
-        elif model == PopulationBloodTypeDistribution:
-            return f"Population: {self.name}"
+        return self.cls.__str__(self)
 
 
 class PopulationBloodTypeDistribution(BloodTypeDistribution):
+
     def blood_types(self, total_units: int) -> List[Tuple[str, int]]:
         result = []
 
@@ -158,6 +171,10 @@ class PopulationBloodTypeDistribution(BloodTypeDistribution):
             result.append((p.blood_type, ceil(float(total_units) * float(p.percentage) / 100.0)))
 
         return result
+
+    @classmethod
+    def distribution_type(cls) -> str:
+        return POPULATION_BLOOD_TYPE_DISTRIBUTION
 
     def __str__(self):
         return f"Population: {self.name}"
@@ -167,7 +184,6 @@ class PopulationBloodTypePercentage(models.Model):
     distribution = models.ForeignKey(
         PopulationBloodTypeDistribution,
         on_delete=models.CASCADE
-
     )
 
     blood_type = models.CharField(

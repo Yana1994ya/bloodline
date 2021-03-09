@@ -31,3 +31,6 @@ def compatible_blood_types(blood_type: str) -> List[str]:
         return ["O+", "O-"]
     elif blood_type == "O-":
         return ["O-"]
+
+
+POPULATION_BLOOD_TYPE_DISTRIBUTION = "pop"
