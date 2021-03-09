@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from django.db import transaction
 
 from blood.blood_types import compatible_blood_types
@@ -6,9 +8,8 @@ from blood.models import BloodTypeDistribution, Issue, MCIRequest, OutstandingDo
 
 
 class CanNotFulfill(Exception):
-    def __init__(self, blood_type: str, units: int):
-        self.blood_type = blood_type
-        self.units = units
+    def __init__(self, missing_units: List[Tuple[str, int]]):
+        self.missing_units = missing_units
 
 
 @transaction.atomic
@@ -44,7 +45,7 @@ def fill_single_request(single_request: SingleRequest):
             )[0:10])
 
             if not donations:
-                raise CanNotFulfill(single_request.patient.blood_type, units_left)
+                raise CanNotFulfill([(single_request.patient.blood_type, units_left)])
 
         donation = donations.pop()
 
@@ -61,6 +62,8 @@ def fill_single_request(single_request: SingleRequest):
 
 
 def fill_mci_request(request: MCIRequest):
+    missing_units = []
+
     for blood_type, units_left in request.distribution.blood_types(request.units):
         donations = []
 
@@ -71,7 +74,8 @@ def fill_mci_request(request: MCIRequest):
                 )[0:10])
 
                 if not donations:
-                    raise CanNotFulfill(blood_type, units_left)
+                    missing_units.append((blood_type, units_left))
+                    break
 
             donation = donations.pop()
 
@@ -85,3 +89,6 @@ def fill_mci_request(request: MCIRequest):
             ).save()
 
             units_left -= issue_units
+
+    if missing_units:
+        raise CanNotFulfill(missing_units)

@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
 from blood import models
-from blood.fill_request import create_and_fill_mci_request, create_and_fill_single_request
+from blood.fill_request import CanNotFulfill, create_and_fill_mci_request, \
+	create_and_fill_single_request
 from blood.forms import AcceptDonation, IdSearch, MCIRequestForm, SingleRequestForm
 
 
@@ -108,7 +109,10 @@ def single_request_confirm(request, id_number, units):
 	if request.method == "GET":
 		return render(request, "single_request_confirm.html", {"patient": patient, "units": units})
 	else:
-		single_request = create_and_fill_single_request(patient, units)
+		try:
+			single_request = create_and_fill_single_request(patient, units)
+		except CanNotFulfill as cnf:
+			return render(request, "cant_fill.html", {"missing": cnf.missing_units})
 
 		return HttpResponseRedirect(
 			reverse(single_request_complete, kwargs={"request_id": single_request.id}))
@@ -127,7 +131,11 @@ def mci_request_start(request):
 
 		if form.is_valid():
 			data = form.cleaned_data
-			mci_request = create_and_fill_mci_request(data["distribution"].leaf, data["units"])
+
+			try:
+				mci_request = create_and_fill_mci_request(data["distribution"].leaf, data["units"])
+			except CanNotFulfill as cnf:
+				return render(request, "cant_fill.html", {"missing": cnf.missing_units})
 
 			return HttpResponseRedirect(reverse(
 				mci_request_complete,

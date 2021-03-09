@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} - Cannot fill{% endblock %}
+{% block content %}
+    <h1 class="mt-5 alert alert-danger">Cannot fill order due to lack of units</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Blood type:</th>
+            <th scope="col">Missing units:</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for blood_type, missing_units in missing %}
+            <tr>
+                <th scope="row">{{ blood_type }}</th>
+                <td>{{ missing_units }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
