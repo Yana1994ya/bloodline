@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path
 
 from blood.views import donation_id, donation_received, donation_start, mci_request_complete, \
-    mci_request_start, \
+    mci_request_start, show_reject, \
     single_request_complete, single_request_confirm, single_request_details, single_request_start
 from homepage.views import homepage
 
@@ -38,5 +38,6 @@ urlpatterns = [
                        name="single_request_complete"),
                   path('mci_request/', mci_request_start, name="mci_request"),
                   path('mci_request/<request_id>/complete', mci_request_complete,
-                       name="mci_request_complete")
+                       name="mci_request_complete"),
+                  path('reject/<int:reject_id>', show_reject, name="show_reject"),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

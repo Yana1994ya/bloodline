@@ -13,10 +13,10 @@
         </tr>
         </thead>
         <tbody>
-        {% for blood_type, missing_units in missing %}
+        {% for reject_type in reject.rejecttype_set.all %}
             <tr>
-                <th scope="row">{{ blood_type }}</th>
-                <td>{{ missing_units }}</td>
+                <th scope="row">{{ reject_type.blood_type }}</th>
+                <td>{{ reject_type.units }}</td>
             </tr>
         {% endfor %}
         </tbody>

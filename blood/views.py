@@ -112,7 +112,12 @@ def single_request_confirm(request, id_number, units):
 		try:
 			single_request = create_and_fill_single_request(patient, units)
 		except CanNotFulfill as cnf:
-			return render(request, "cant_fill.html", {"missing": cnf.missing_units})
+			reject = cnf.save_reject(models.SingleRequest)
+
+			return HttpResponseRedirect(reverse(
+				show_reject,
+				kwargs={"reject_id": reject.id}
+			))
 
 		return HttpResponseRedirect(
 			reverse(single_request_complete, kwargs={"request_id": single_request.id}))
@@ -135,7 +140,12 @@ def mci_request_start(request):
 			try:
 				mci_request = create_and_fill_mci_request(data["distribution"].leaf, data["units"])
 			except CanNotFulfill as cnf:
-				return render(request, "cant_fill.html", {"missing": cnf.missing_units})
+				reject = cnf.save_reject(models.MCIRequest)
+
+				return HttpResponseRedirect(reverse(
+					show_reject,
+					kwargs={"reject_id": reject.id}
+				))
 
 			return HttpResponseRedirect(reverse(
 				mci_request_complete,
@@ -148,3 +158,9 @@ def mci_request_start(request):
 def mci_request_complete(request, request_id: int):
 	mci_request = get_object_or_404(models.MCIRequest, id=request_id)
 	return render(request, "mci_request_complete.html", {"mci_request": mci_request})
+
+
+def show_reject(request, reject_id: int):
+	reject = get_object_or_404(models.Reject, id=reject_id)
+
+	return render(request, "cant_fill.html", {"reject": reject})

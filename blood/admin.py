@@ -15,3 +15,6 @@ class PopulationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.PopulationBloodTypeDistribution, PopulationAdmin)
+
+admin.site.register(models.MCIRequest)
+admin.site.register(models.SingleRequest)

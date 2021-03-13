@@ -99,6 +99,8 @@ class IssueRequest(models.Model):
         on_delete=models.CASCADE
     )
 
+    request_time = models.DateTimeField(auto_now_add=True, editable=False)
+
     def save(self, *args, **kwargs):
         if not self.content_type:
             self.content_type = ContentType.objects.get_for_model(self.__class__)
@@ -109,6 +111,9 @@ class IssueRequest(models.Model):
 class SingleRequest(IssueRequest):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     units = models.IntegerField()
+
+    def __str__(self):
+        return f"Single request {self.units} Units of {self.patient.blood_type}"
 
 
 class BloodTypeDistribution(models.Model):
@@ -201,6 +206,12 @@ class MCIRequest(IssueRequest):
     units = models.IntegerField()
     distribution = models.ForeignKey(BloodTypeDistribution, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"MCIRequest for {self.units} with {self.distribution} distribution"
+
+    class Meta:
+        verbose_name = "MCI Request"
+
 
 class Issue(models.Model):
     request = models.ForeignKey(IssueRequest, on_delete=models.CASCADE)
@@ -211,3 +222,23 @@ class Issue(models.Model):
     @property
     def blood_type(self) -> str:
         return self.donation.blood_type
+
+
+class Reject(models.Model):
+    time = models.DateTimeField(auto_now_add=True, editable=False)
+
+    request_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE
+    )
+
+
+class RejectType(models.Model):
+    reject = models.ForeignKey(Reject, on_delete=models.CASCADE)
+
+    blood_type = models.CharField(
+        max_length=10,
+        choices=AVAILABLE_TYPES_CHOICES
+    )
+
+    units = models.IntegerField()

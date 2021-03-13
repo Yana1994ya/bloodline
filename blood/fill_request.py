@@ -1,15 +1,33 @@
-from typing import List, Tuple
+from typing import List, Tuple, Type
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
 from blood.blood_types import compatible_blood_types
-from blood.models import BloodTypeDistribution, Issue, MCIRequest, OutstandingDonations, Patient, \
-    SingleRequest
+from blood.models import BloodTypeDistribution, Issue, IssueRequest, MCIRequest, \
+    OutstandingDonations, Patient, \
+    Reject, RejectType, SingleRequest
 
 
 class CanNotFulfill(Exception):
     def __init__(self, missing_units: List[Tuple[str, int]]):
         self.missing_units = missing_units
+
+    @transaction.atomic
+    def save_reject(self, request_type: Type[IssueRequest]):
+        reject = Reject(
+            request_type=ContentType.objects.get_for_model(request_type)
+        )
+        reject.save()
+
+        for blood_type, units in self.missing_units:
+            RejectType(
+                reject=reject,
+                blood_type=blood_type,
+                units=units
+            ).save()
+
+        return reject
 
 
 @transaction.atomic
