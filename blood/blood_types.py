@@ -13,6 +13,17 @@ AVAILABLE_TYPES = (
 
 AVAILABLE_TYPES_CHOICES = list(map(lambda x: (x, x), AVAILABLE_TYPES))
 
+CAN_DONATE = [
+    ("O-", ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
+    ("O+", ["A+", "B+", "AB+", "O+"]),
+    ("A-", ["A+", "A-", "AB+"]),
+    ("A+", ["A+", "AB+"]),
+    ("B-", ["B+", "B-", "AB+", "AB-"]),
+    ("B+", ["B+", "AB+"]),
+    ("AB-", ["AB+", "AB-"]),
+    ("AB+", ["AB+"])
+]
+
 
 def compatible_blood_types(blood_type: str) -> List[str]:
     if blood_type == "A+":

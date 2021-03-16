@@ -40,7 +40,18 @@
             <th scope="row">Blood type:</th>
             <td>{{ donation.donor.blood_type }}</td>
         </tr>
-
+        <tr>
+            <th scope="row">Phone number:</th>
+            <td>{% if donation.donor.phone_number %}
+                {{ donation.donor.phone_number }}
+            {% else %}
+                Unspecified
+            {% endif %}</td>
+        </tr>
+        <tr>
+            <th scope="row">Smokes:</th>
+            <td>{{ donation.donor.smokes|yesno }}</td>
+        </tr>
         </tbody>
     </table>
 {% endblock %}

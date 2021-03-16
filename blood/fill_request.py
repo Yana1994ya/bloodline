@@ -5,7 +5,7 @@ from django.db import transaction
 
 from blood.blood_types import compatible_blood_types
 from blood.models import BloodTypeDistribution, Issue, IssueRequest, MCIRequest, \
-    OutstandingDonations, Patient, \
+    OutstandingDonations, OutstandingDonationsMCI, Patient, \
     Reject, RejectType, SingleRequest
 
 
@@ -87,9 +87,9 @@ def fill_mci_request(request: MCIRequest):
 
         while units_left > 0:
             if not donations:
-                donations = list(OutstandingDonations.objects.filter(
+                donations = list(OutstandingDonationsMCI.objects.filter(
                     blood_type__in=compatible_blood_types(blood_type)
-                )[0:10])
+                ).order_by("donation_date")[0:10])
 
                 if not donations:
                     missing_units.append((blood_type, units_left))

@@ -62,7 +62,9 @@ class Patient(models.Model):
             "blood_type": self.blood_type,
             "birthday": self.birthday,
             "first_name": self.first_name,
-            "last_name": self.last_name
+            "last_name": self.last_name,
+            "smokes": self.smokes,
+            "phone_number": self.phone_number
         }
 
     @classmethod
@@ -99,10 +101,35 @@ class OutstandingDonations(models.Model):
     donation = models.OneToOneField(Donation, on_delete=models.CASCADE, primary_key=True)
     units = models.IntegerField()
     blood_type = models.CharField(max_length=10, choices=AVAILABLE_TYPES_CHOICES)
+    donation_date = models.DateTimeField()
 
     class Meta:
         managed = False
         db_table = "blood_outstanding_donations"
+
+
+class OutstandingDonationsMCI(models.Model):
+    donation = models.OneToOneField(Donation, on_delete=models.CASCADE, primary_key=True)
+    units = models.IntegerField()
+    blood_type = models.CharField(max_length=10, choices=AVAILABLE_TYPES_CHOICES)
+    donation_date = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = "blood_outstanding_donations_mci"
+
+
+class BloodRank(models.Model):
+    blood_type = models.CharField(
+        primary_key=True,
+        max_length=10,
+        choices=AVAILABLE_TYPES_CHOICES
+    )
+    rank = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = "blood_rank"
 
 
 class IssueRequest(models.Model):

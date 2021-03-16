@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
@@ -168,3 +169,22 @@ def show_reject(request, reject_id: int):
 	reject = get_object_or_404(models.Reject, id=reject_id)
 
 	return render(request, "cant_fill.html", {"reject": reject})
+
+
+def show_outstanding(request, page: int):
+	outstanding = models.OutstandingDonations.objects.all().prefetch_related(
+		"donation",
+		"donation__donor"
+	)
+
+	pages = Paginator(outstanding, 30)
+	current_page = pages.page(page)
+
+	return render(
+		request,
+		"outstanding.html",
+		{
+			"pages": pages,
+			"current_page": current_page
+		}
+	)
