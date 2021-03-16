@@ -40,7 +40,9 @@ def donation_id(request, id_number):
 				first_name=data["first_name"],
 				last_name=data["last_name"],
 				birthday=data["birthday"],
-				blood_type=data["blood_type"]
+				blood_type=data["blood_type"],
+				smokes=data["smokes"],
+				phone_number=data["phone_number"]
 			)
 
 			donation = models.Donation(donor=patient, units=data["units"])
@@ -90,7 +92,9 @@ def single_request_details(request, id_number):
 				first_name=data["first_name"],
 				last_name=data["last_name"],
 				birthday=data["birthday"],
-				blood_type=data["blood_type"]
+				blood_type=data["blood_type"],
+				smokes=data["smokes"],
+				phone_number=data["phone_number"]
 			)
 
 			return HttpResponseRedirect(

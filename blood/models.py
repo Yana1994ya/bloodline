@@ -1,6 +1,7 @@
+from datetime import datetime
 from math import ceil
 import re
-from typing import List, Tuple, Type
+from typing import List, Optional, Tuple, Type
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -22,21 +23,36 @@ class Patient(models.Model):
 
     blood_type = models.CharField(max_length=10, choices=AVAILABLE_TYPES_CHOICES)
 
+    smokes = models.BooleanField()
+    phone_number = models.CharField(max_length=20, null=True)
+
     def __str__(self):
         return f"({self.id}) {self.first_name} {self.last_name}"
 
-    def update(self, first_name, last_name, birthday, blood_type):
+    def update(
+            self,
+            first_name: str,
+            last_name: str,
+            birthday: datetime.date,
+            blood_type: str,
+            smokes: bool,
+            phone_number: Optional[str]
+    ):
         if not (
                 first_name == self.first_name and
                 last_name == self.last_name and
                 birthday == self.birthday and
-                blood_type == self.blood_type
+                blood_type == self.blood_type and
+                smokes == self.smokes and
+                phone_number == self.phone_number
         ):
             self.first_name = first_name
             self.last_name = last_name
             self.birthday = birthday
             # Blood type is a major change, ask for confirmation
             self.blood_type = blood_type
+            self.smokes = smokes
+            self.phone_number = phone_number
 
             self.save()
 

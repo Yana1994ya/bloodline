@@ -13,6 +13,8 @@ class PatientDetails(forms.Form):
     birthday = forms.DateField(required=True)
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
+    phone_number = forms.RegexField("^0[\\d]{1,2}-[\\d]{7}$", required=False)
+    smokes = forms.BooleanField(required=False)
 
 
 class AcceptDonation(PatientDetails):
