@@ -10,10 +10,12 @@
         <tr>
             <th scope="col">DonationID</th>
             <th scope="col">Blood Type</th>
+            <th scope="col">DonorID</th>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
             <th scope="col">DOB</th>
             <th scope="col">Smoke</th>
+            <th scope="col">Phone</th>
             <th scope="col">Date</th>
         </tr>
         </thead>
@@ -22,10 +24,16 @@
             <tr>
                 <th scope="row">{{ out.donation_id }}</th>
                 <td>{{ out.blood_type }}</td>
+                <td>{{ out.donation.donor.id }}</td>
                 <td>{{ out.donation.donor.first_name }}</td>
                 <td>{{ out.donation.donor.last_name }}</td>
                 <td>{{ out.donation.donor.birthday }}</td>
                 <td>{{ out.donation.donor.smoke|yesno }}</td>
+                <td>{% if out.donation.donor.phone_number %}
+                    {{ out.donation.donor.phone_number }}
+                {% else %}
+                    -
+                {% endif %}</td>
                 <td>{{ out.donation.donation_date }}</td>
             </tr>
         {% endfor %}
