@@ -1,4 +1,4 @@
-from typing import List
+from frozendict import frozendict
 
 AVAILABLE_TYPES = (
     "A+",
@@ -13,35 +13,34 @@ AVAILABLE_TYPES = (
 
 AVAILABLE_TYPES_CHOICES = list(map(lambda x: (x, x), AVAILABLE_TYPES))
 
-CAN_DONATE = [
-    ("O-", ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]),
-    ("O+", ["A+", "B+", "AB+", "O+"]),
-    ("A-", ["A+", "A-", "AB+"]),
-    ("A+", ["A+", "AB+"]),
-    ("B-", ["B+", "B-", "AB+", "AB-"]),
-    ("B+", ["B+", "AB+"]),
-    ("AB-", ["AB+", "AB-"]),
-    ("AB+", ["AB+"])
-]
+CAN_DONATE = frozendict({
+    "O-": frozenset({"A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"}),
+    "O+": frozenset({"A+", "B+", "AB+", "O+"}),
+    "A-": frozenset({"A+", "A-", "AB+"}),
+    "A+": frozenset({"A+", "AB+"}),
+    "B-": frozenset({"B+", "B-", "AB+", "AB-"}),
+    "B+": frozenset({"B+", "AB+"}),
+    "AB-": frozenset({"AB+", "AB-"}),
+    "AB+": frozenset({"AB+"})
+})
+
+MAX_BLOOD_AGE_DAYS = 30
+HIGH_PRIORITY_DAYS = 20
 
 
-def compatible_blood_types(blood_type: str) -> List[str]:
-    if blood_type == "A+":
-        return ["A+", "A-", "O+", "O-"]
-    elif blood_type == "A-":
-        return ["A-", "O-"]
-    elif blood_type == "B+":
-        return ["B+", "B-", "O+", "O-"]
-    elif blood_type == "B-":
-        return ["B-", "O-"]
-    elif blood_type == "AB+":
-        return list(AVAILABLE_TYPES)
-    elif blood_type == "AB-":
-        return ["AB-", "A-", "B-", "O-"]
-    elif blood_type == "O+":
-        return ["O+", "O-"]
-    elif blood_type == "O-":
-        return ["O-"]
+def _can_receive():
+    result = {}
 
+    for donor_type, recipient_types in CAN_DONATE.items():
+        for recipient_type in recipient_types:
+            if recipient_type not in result:
+                result[recipient_type] = set()
+
+            result[recipient_type].add(donor_type)
+
+    return frozendict(map(lambda pair: (pair[0], frozenset(pair[1])), result.items()))
+
+
+CAN_RECEIVE = _can_receive()
 
 POPULATION_BLOOD_TYPE_DISTRIBUTION = "pop"

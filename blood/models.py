@@ -128,7 +128,6 @@ class BloodRank(models.Model):
     rank = models.IntegerField()
 
     class Meta:
-        managed = False
         db_table = "blood_rank"
 
 

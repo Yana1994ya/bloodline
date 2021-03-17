@@ -3,7 +3,7 @@ from typing import List, Tuple, Type
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
-from blood.blood_types import compatible_blood_types
+from blood.blood_types import CAN_RECEIVE
 from blood.models import BloodTypeDistribution, Issue, IssueRequest, MCIRequest, \
     OutstandingDonations, OutstandingDonationsMCI, Patient, \
     Reject, RejectType, SingleRequest
@@ -59,7 +59,7 @@ def fill_single_request(single_request: SingleRequest):
     while units_left > 0:
         if not donations:
             donations = list(OutstandingDonations.objects.filter(
-                blood_type__in=compatible_blood_types(single_request.patient.blood_type)
+                blood_type__in=CAN_RECEIVE[single_request.patient.blood_type]
             )[0:10])
 
             if not donations:
@@ -88,7 +88,7 @@ def fill_mci_request(request: MCIRequest):
         while units_left > 0:
             if not donations:
                 donations = list(OutstandingDonationsMCI.objects.filter(
-                    blood_type__in=compatible_blood_types(blood_type)
+                    blood_type__in=CAN_RECEIVE[blood_type]
                 ).order_by("donation_date")[0:10])
 
                 if not donations:
