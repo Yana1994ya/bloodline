@@ -50,7 +50,7 @@ class Command(BaseCommand):
             first_name=first_name,
             last_name=last_name,
             blood_type=choice(blood_types.AVAILABLE_TYPES),
-            smokes=randint(0, 10) > 8,
+            smokes=randint(0, 10) >= 8,
             phone_number=phone_number,
             birthday=f.date_of_birth()
         )
