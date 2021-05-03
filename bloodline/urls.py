@@ -16,16 +16,18 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 from blood.views import donation_id, donation_received, donation_start, mci_request_complete, \
     mci_request_start, show_outstanding, show_reject, single_request_complete, \
     single_request_confirm, single_request_details, single_request_start
-from homepage.views import homepage
+from homepage.views import export_audit_trail, export_stats, homepage
 
 urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('', homepage, name="homepage"),
+                  path('audit_export', export_audit_trail, name="audit_export"),
+                  path('stats_export', export_stats, name="stats_export"),
                   path('donation/', donation_start, name="donation_start"),
                   path('donation/<id_number>', donation_id, name="donation_id"),
                   path('donation/received/<donation_id>', donation_received,
@@ -42,4 +44,5 @@ urlpatterns = [
                   path('reject/<int:reject_id>', show_reject, name="show_reject"),
                   path('outstanding', show_outstanding, {"page": 1}, name="outstanding"),
                   path('outstanding/<int:page>', show_outstanding, name="outstanding"),
+                  path('accounts/', include('django.contrib.auth.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

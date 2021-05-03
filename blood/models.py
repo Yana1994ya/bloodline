@@ -3,8 +3,10 @@ from math import ceil
 import re
 from typing import List, Optional, Tuple, Type
 
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+import reversion
 
 from blood.blood_types import AVAILABLE_TYPES_CHOICES, POPULATION_BLOOD_TYPE_DISTRIBUTION
 
@@ -14,6 +16,7 @@ class InvalidPatientId(Exception):
         self.patient_id = patient_id
 
 
+@reversion.register
 class Patient(models.Model):
     id = models.CharField(max_length=10, primary_key=True)
     first_name = models.CharField(max_length=250)
@@ -80,6 +83,7 @@ class Patient(models.Model):
             return patient, {}
 
 
+@reversion.register
 class Donation(models.Model):
     id = models.AutoField(primary_key=True)
 
@@ -96,7 +100,15 @@ class Donation(models.Model):
     def blood_type(self) -> str:
         return self.donor.blood_type
 
+    class Meta:
+        permissions = [
+            ("can_collect", "Can collect donations"),
+            ("can_request_single", "Can request single donations"),
+            ("can_request_mci", "Can request multiple donations")
+        ]
 
+
+@reversion.register
 class OutstandingDonations(models.Model):
     donation = models.OneToOneField(Donation, on_delete=models.CASCADE, primary_key=True)
     units = models.IntegerField()
@@ -108,6 +120,7 @@ class OutstandingDonations(models.Model):
         db_table = "blood_outstanding_donations"
 
 
+@reversion.register
 class OutstandingDonationsMCI(models.Model):
     donation = models.OneToOneField(Donation, on_delete=models.CASCADE, primary_key=True)
     units = models.IntegerField()
@@ -131,6 +144,7 @@ class BloodRank(models.Model):
         db_table = "blood_rank"
 
 
+@reversion.register
 class IssueRequest(models.Model):
     id = models.AutoField(primary_key=True)
 
@@ -150,6 +164,7 @@ class IssueRequest(models.Model):
         super(IssueRequest, self).save(*args, **kwargs)
 
 
+@reversion.register
 class SingleRequest(IssueRequest):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     units = models.IntegerField()
@@ -158,6 +173,7 @@ class SingleRequest(IssueRequest):
         return f"Single request {self.units} Units of {self.patient.blood_type}"
 
 
+@reversion.register
 class BloodTypeDistribution(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=250)
@@ -209,6 +225,7 @@ class BloodTypeDistribution(models.Model):
         return self.cls.__str__(self)
 
 
+@reversion.register
 class PopulationBloodTypeDistribution(BloodTypeDistribution):
 
     def blood_types(self, total_units: int) -> List[Tuple[str, int]]:
@@ -227,6 +244,7 @@ class PopulationBloodTypeDistribution(BloodTypeDistribution):
         return f"Population: {self.name}"
 
 
+@reversion.register
 class PopulationBloodTypePercentage(models.Model):
     distribution = models.ForeignKey(
         PopulationBloodTypeDistribution,
@@ -244,6 +262,7 @@ class PopulationBloodTypePercentage(models.Model):
         unique_together = (("distribution_id", "blood_type"))
 
 
+@reversion.register
 class MCIRequest(IssueRequest):
     units = models.IntegerField()
     distribution = models.ForeignKey(BloodTypeDistribution, on_delete=models.CASCADE)
@@ -255,6 +274,7 @@ class MCIRequest(IssueRequest):
         verbose_name = "MCI Request"
 
 
+@reversion.register
 class Issue(models.Model):
     request = models.ForeignKey(IssueRequest, on_delete=models.CASCADE)
     donation = models.ForeignKey(Donation, on_delete=models.CASCADE)
@@ -266,6 +286,7 @@ class Issue(models.Model):
         return self.donation.blood_type
 
 
+@reversion.register
 class Reject(models.Model):
     time = models.DateTimeField(auto_now_add=True, editable=False)
 
@@ -275,6 +296,7 @@ class Reject(models.Model):
     )
 
 
+@reversion.register
 class RejectType(models.Model):
     reject = models.ForeignKey(Reject, on_delete=models.CASCADE)
 
@@ -284,3 +306,8 @@ class RejectType(models.Model):
     )
 
     units = models.IntegerField()
+
+
+reversion.register(User)
+reversion.register(Group)
+reversion.register(Permission)

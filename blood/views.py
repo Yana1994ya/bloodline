@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -9,6 +10,7 @@ from blood.fill_request import CanNotFulfill, create_and_fill_mci_request, \
 from blood.forms import AcceptDonation, IdSearch, MCIRequestForm, SingleRequestForm
 
 
+@permission_required("blood.can_collect")
 def donation_start(request):
 	if request.method == "GET":
 		form = IdSearch()
@@ -23,6 +25,7 @@ def donation_start(request):
 	return render(request, "donation.html", {"form": form})
 
 
+@permission_required("blood.can_collect")
 def donation_id(request, id_number):
 	try:
 		patient, initial_data = models.Patient.details(id_number)
@@ -55,12 +58,14 @@ def donation_id(request, id_number):
 	return render(request, "accept_donation.html", {"form": form, "id_number": id_number})
 
 
+@permission_required("blood.can_collect")
 def donation_received(request, donation_id):
 	donation = get_object_or_404(models.Donation, id=donation_id)
 
 	return render(request, "donation_received.html", {"donation": donation})
 
 
+@permission_required("blood.can_request_single")
 def single_request_start(request):
 	if request.method == "GET":
 		form = IdSearch()
@@ -75,6 +80,7 @@ def single_request_start(request):
 	return render(request, "single_request_start.html", {"form": form})
 
 
+@permission_required("blood.can_request_single")
 def single_request_details(request, id_number):
 	try:
 		patient, initial_data = models.Patient.details(id_number)
@@ -107,6 +113,7 @@ def single_request_details(request, id_number):
 	return render(request, "single_request.html", {"form": form, "id_number": id_number})
 
 
+@permission_required("blood.can_request_single")
 def single_request_confirm(request, id_number, units):
 	units = int(units)
 	patient = get_object_or_404(models.Patient, id=id_number)
@@ -128,11 +135,13 @@ def single_request_confirm(request, id_number, units):
 			reverse(single_request_complete, kwargs={"request_id": single_request.id}))
 
 
+@permission_required("blood.can_request_single")
 def single_request_complete(request, request_id):
 	single_request = get_object_or_404(models.SingleRequest, id=request_id)
 	return render(request, "single_request_complete.html", {"single_request": single_request})
 
 
+@permission_required("blood.can_request_mci")
 def mci_request_start(request):
 	if request.method == "GET":
 		form = MCIRequestForm()
@@ -160,11 +169,13 @@ def mci_request_start(request):
 	return render(request, "mci_request.html", {"form": form})
 
 
+@permission_required("blood.can_request_mci")
 def mci_request_complete(request, request_id: int):
 	mci_request = get_object_or_404(models.MCIRequest, id=request_id)
 	return render(request, "mci_request_complete.html", {"mci_request": mci_request})
 
 
+@permission_required("blood.can_request_mci")
 def show_reject(request, reject_id: int):
 	reject = get_object_or_404(models.Reject, id=reject_id)
 

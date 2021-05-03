@@ -4,15 +4,12 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-
     <title>Bloodline{% block title %}{% endblock %}</title>
     <meta name="description" content="The HTML5 Herald">
     <meta name="author" content="SitePoint">
 
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
-
-
 </head>
 <body>
 <header>
@@ -37,6 +34,14 @@
 
                 </ul>
             </div>
+        </div>
+        <div class="ml-auto">
+            {% if user.is_authenticated %}
+                Hello {{ user.first_name }} {{ user.last_name }},
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                Hello guest, <a href="{% url "login" %}">Login</a>
+            {% endif %}
         </div>
     </nav>
 </header>

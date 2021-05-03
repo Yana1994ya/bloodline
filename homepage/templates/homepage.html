@@ -23,4 +23,38 @@
         {% endfor %}
         </tbody>
     </table>
+    <a href="{% url "stats_export" %}">Export stats</a>
+
+    {% if user.is_superuser %}
+        <h2 class="mt-4">Latest changes</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Object</th>
+                <th scope="col">User</th>
+                <th scope="col">Comment</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for trail in audit_trail %}
+                <tr>
+                    <td>{{ trail.revision.date_created }}</td>
+                    <td>{{ trail.object_repr }}</td>
+                    <td>
+                        {% if trail.revision.user %}
+                            {{ trail.revision.user.first_name }}
+                            {% if trail.revision.user.last_name %},
+                                {{ trail.revision.user.last_name }}{% endif %}
+                        {% else %}
+                            System
+                        {% endif %}
+                    </td>
+                    <td>{{ trail.revision.comment }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url "audit_export" %}">Export all records</a>
+    {% endif %}
 {% endblock %}
