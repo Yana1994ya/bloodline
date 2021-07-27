@@ -13,7 +13,13 @@ def add_groups(apps, _schema_editor):
 
     def add_permissions(group: Group, *codes: str):
         for code in codes:
-            group.permissions.add(Permission.objects.get(content_type=donation_ct, codename=code))
+            perm, created = Permission.objects.get_or_create(content_type=donation_ct,
+                                                             codename=code)
+
+            if created:
+                perm.save()
+
+            group.permissions.add(perm)
 
         group.save()
 
